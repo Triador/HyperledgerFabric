@@ -19,6 +19,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
@@ -32,36 +33,30 @@ type SimpleChaincode struct {
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("########### example_cc Init ###########")
 	_, args := stub.GetFunctionAndParameters()
-	var A, B string    // Entities
-	var Aval, Bval int // Asset holdings
+	var UA string    // Entities
+	var UAval int // Asset holdings
 	var err error
 
-	if len(args) != 4 {
-		return shim.Error("Incorrect number of arguments. Expecting 4")
+	if len(args) < 3 {
+		return shim.Error("Incorrect number of arguments. Expecting at least 3")
 	}
 
 	// Initialize the chaincode
-	A = args[0]
-	Aval, err = strconv.Atoi(args[1])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding")
-	}
-	B = args[2]
-	Bval, err = strconv.Atoi(args[3])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding")
-	}
-	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
+	for i := 0; i < len(args); i++ {
+		s := strings.Split(args[i], "#")
+		UA = s[0]
 
-	// Write the state to the ledger
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
-	if err != nil {
-		return shim.Error(err.Error())
-	}
+		UAval, err = strconv.Atoi(s[1]);
+		if err != nil {
+			return shim.Error("Expecting integer value for asset holding")
+		}
 
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
-	if err != nil {
-		return shim.Error(err.Error())
+		err = stub.PutState(UA, []byte(strconv.Itoa(UAval)))
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		fmt.Printf(UA + " " + UAval)
 	}
 
 	if transientMap, err := stub.GetTransient(); err == nil {
