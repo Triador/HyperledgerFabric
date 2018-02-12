@@ -39,14 +39,16 @@ private final static String BASE_DIR = "C:\\Users\\Public\\Documents\\pocfabric\
             if ("init".equals(args[0])) {
                 initChaincode();
             } else if ("transfer".equals(args[0])) {
-                String user = args[1];
-                String quantity = args[2];
+                String from = args[1];
+                String to = args[2];
+                String asset = args[2];
+                String quantity = args[3];
 
-                transfer(user, quantity);
+                transfer(from, to, asset, quantity);
             } else if ("balance".equals(args[0])) {
-                String user = args[1];
+                String userAsset = args[1] + "." + args[2];
 
-                balance(user);
+                balance(userAsset);
             }
 
         } catch (Exception e) {
@@ -55,7 +57,7 @@ private final static String BASE_DIR = "C:\\Users\\Public\\Documents\\pocfabric\
 
     }
 
-    private static void balance(String user) throws IOException, CryptoException, InvalidArgumentException, TransactionException, ProposalException {
+    private static void balance(String userAsset) throws IOException, CryptoException, InvalidArgumentException, TransactionException, ProposalException {
         HFClient client = setupUser1Client();
 
         Channel channel = setupChannel(client);
@@ -64,19 +66,19 @@ private final static String BASE_DIR = "C:\\Users\\Public\\Documents\\pocfabric\
 
         queryRequest.setChaincodeID(CHAINCODE_ID);
         queryRequest.setFcn("invoke");
-        queryRequest.setArgs(new String[] {"query", user});
+        queryRequest.setArgs(new String[] {"query", userAsset});
 
         Collection<ProposalResponse> queryResponse = channel.sendTransactionProposal(queryRequest, channel.getPeers());
 
-        out(user + " balance: " + new String(queryResponse.iterator().next().getChaincodeActionResponsePayload()));
+        out(userAsset + " balance: " + new String(queryResponse.iterator().next().getChaincodeActionResponsePayload()));
     }
 
-    private static void transfer(String user, String quantity) throws IOException, CryptoException, InvalidArgumentException, TransactionException, ProposalException {
+    private static void transfer(String from, String to, String asset, String quantity) throws IOException, CryptoException, InvalidArgumentException, TransactionException, ProposalException {
         HFClient client = setupUser1Client();
         TransactionProposalRequest transactionProposalRequest = client.newTransactionProposalRequest();
         transactionProposalRequest.setChaincodeID(CHAINCODE_ID);
         transactionProposalRequest.setFcn("invoke");
-        transactionProposalRequest.setArgs(new String[] {"move", "user1", user, quantity});
+        transactionProposalRequest.setArgs(new String[] {"move", from, to, asset, quantity});
 
         Channel channel = setupChannel(client);
         Collection<ProposalResponse> transactionPropResp = channel.sendTransactionProposal(transactionProposalRequest, channel.getPeers());
@@ -112,7 +114,9 @@ private final static String BASE_DIR = "C:\\Users\\Public\\Documents\\pocfabric\
         instantiateProposalRequest.setProposalWaitTime(40000);
         instantiateProposalRequest.setChaincodeID(CHAINCODE_ID);
         instantiateProposalRequest.setFcn("init");
-        instantiateProposalRequest.setArgs(new String[] {"user1", "100", "user2", "100"});
+        String user1 = "user1.tractors|100#user1.cranes|100#user1.airplanes|100";
+        String user2 = "user2.tractors|100#user2.cranes|100#user2.airplanes|100";
+        instantiateProposalRequest.setArgs(new String[] {user1, user2});
         Map<String, byte[]> tm = new HashMap<>();
         instantiateProposalRequest.setTransientMap(tm);
 
