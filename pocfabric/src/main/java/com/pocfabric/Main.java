@@ -114,9 +114,14 @@ private final static String BASE_DIR = "C:\\Users\\Public\\Documents\\pocfabric\
         instantiateProposalRequest.setProposalWaitTime(40000);
         instantiateProposalRequest.setChaincodeID(CHAINCODE_ID);
         instantiateProposalRequest.setFcn("init");
-        String user1 = "user1.tractors|100#user1.cranes|100#user1.airplanes|100";
-        String user2 = "user2.tractors|100#user2.cranes|100#user2.airplanes|100";
-        instantiateProposalRequest.setArgs(new String[] {user1, user2});
+        List<String> usersAndAssets = new ArrayList<>();
+        usersAndAssets.add("user1.tractors#100");
+        usersAndAssets.add("user1.cranes#100");
+        usersAndAssets.add("user1.airplanes#100");
+        usersAndAssets.add("user2.tractors#100");
+        usersAndAssets.add("user2.cranes#100");
+        usersAndAssets.add("user2.airplanes#100");
+        instantiateProposalRequest.setArgs(usersAndAssets.toArray(new String[usersAndAssets.size()]));
         Map<String, byte[]> tm = new HashMap<>();
         instantiateProposalRequest.setTransientMap(tm);
 
