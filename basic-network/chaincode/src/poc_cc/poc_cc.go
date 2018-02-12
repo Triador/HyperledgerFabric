@@ -56,7 +56,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 			return shim.Error(err.Error())
 		}
 
-		fmt.Printf(UA + " " + UAval)
+		//fmt.Printf(UA + " " + UAval)
 	}
 
 	if transientMap, err := stub.GetTransient(); err == nil {

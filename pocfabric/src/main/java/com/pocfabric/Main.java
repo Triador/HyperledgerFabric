@@ -28,7 +28,7 @@ private final static String BASE_DIR = "C:\\Users\\Public\\Documents\\pocfabric\
     private final static String DOCKER_HOST = "localhost";
     
     private final static ChaincodeID CHAINCODE_ID = ChaincodeID.newBuilder()
-            .setName("poc_cc_go")
+            .setName("poc_cc_go3")
             .setPath("poc_cc")
             .setVersion("1")
             .build();
@@ -115,13 +115,14 @@ private final static String BASE_DIR = "C:\\Users\\Public\\Documents\\pocfabric\
         instantiateProposalRequest.setChaincodeID(CHAINCODE_ID);
         instantiateProposalRequest.setFcn("init");
         List<String> usersAndAssets = new ArrayList<>();
-        usersAndAssets.add("user1.tractors#100");
+        usersAndAssets.add("user1.tractors#99");
         usersAndAssets.add("user1.cranes#100");
-        usersAndAssets.add("user1.airplanes#100");
-        usersAndAssets.add("user2.tractors#100");
-        usersAndAssets.add("user2.cranes#100");
-        usersAndAssets.add("user2.airplanes#100");
-        instantiateProposalRequest.setArgs(usersAndAssets.toArray(new String[usersAndAssets.size()]));
+        usersAndAssets.add("user1.airplanes#101");
+        usersAndAssets.add("user2.tractors#102");
+        usersAndAssets.add("user2.cranes#103");
+        usersAndAssets.add("user2.airplanes#104");
+        String[] test = usersAndAssets.toArray(new String[usersAndAssets.size()]);
+        instantiateProposalRequest.setArgs(test);
         Map<String, byte[]> tm = new HashMap<>();
         instantiateProposalRequest.setTransientMap(tm);
 
